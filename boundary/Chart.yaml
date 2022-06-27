@@ -1,0 +1,15 @@
+apiVersion: v2
+name: boundary
+description: A Helm chart to deploy Hashicorp Boundary on a K8S Cluster
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+dependencies:
+- name: boundary-worker
+  alias: worker
+  version: 0.1.0
+  repository: file://../boundary-worker
+- name: boundary-controller
+  alias: controller
+  version: 0.1.0
+  repository: file://../boundary-controller

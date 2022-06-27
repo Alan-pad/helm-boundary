@@ -1,0 +1,67 @@
+controller:
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: boundary@padok-playground.iam.gserviceaccount.com
+  ingress:
+    api:
+      enabled: true
+      className: "nginx"
+      annotations:
+        ingress.kubernetes.io/ssl-redirect: "true"
+        # nginx.ingress.kubernetes.io/auth-url: "https://boundary.playground.padok.cloud/oauth2/auth"
+        # nginx.ingress.kubernetes.io/auth-signin: "https://boundary.playground.padok.cloud/oauth2/start?rd=$escaped_request_uri"
+        # nginx.ingress.kubernetes.io/auth-response-headers: "x-auth-request-user, x-auth-request-email"
+      hosts:
+        - host: boundary.playground.padok.cloud
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+    cluster:
+      enabled: false
+  config:
+    environmentSecret: boundary-credentials
+    description: "Boundary Playground Controller"
+    api:
+      scheme: https
+      tlsDisable: "true"
+      hostname: boundary.playground.padok.cloud
+    cluster:
+    db:
+      maxOpenConnections: "5"
+    kms:
+      root:
+        gcp:
+          project: "padok-playground"
+          region: "europe-west1"
+          keyRing: boundary
+          key: boundary-root
+      worker:
+        gcp:
+          project: "padok-playground"
+          region: "europe-west1"
+          keyRing: boundary
+          key: boundary-worker
+      recovery:
+        gcp:
+          project: "padok-playground"
+          region: "europe-west1"
+          keyRing: boundary
+          key: boundary-recovery
+worker:
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: boundary@padok-playground.iam.gserviceaccount.com
+  config:
+    controller:
+      ips: "35.233.63.90:80"
+    tags:
+      organization: "padok"
+      type: "project"
+      region: "europe-west1"
+    hostname: "worker-1.playground.padok.cloud"
+    kms:
+      gcp:
+        project: "padok-playground"
+        region: "europe-west1"
+        keyRing: boundary
+        key: boundary-worker
